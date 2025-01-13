@@ -3,17 +3,16 @@ import tkinter as tk
 identify = ["...", "...", "...", "...", "...", "...", "...", "...", "..."]
 turn = 1
 order = []
-
     
 game = tk.Tk()
 
 def move(box):
     global turn
     if (turn % 2) == 0 and identify[box] == "...":
-        identify[box] = "X"
+        identify[box] = "O"
         order.append(box)
     elif (turn % 2) == 1 and identify[box] == "...":
-        identify[box] = "O"
+        identify[box] = "X"
         order.append(box)
     turn += 1
     updateButton()
@@ -38,21 +37,43 @@ def winnerCheckX():
     #Below is to find the common X's in the first row
     for x in [identify[0:3], identify[3:6], identify[6:9]]:
         if x.count("X") == 3:
-            game.destroy()
+            declarationX()
             return
         
     for y in range(len(identify[0:3])):
         if identify[y] == "X" and identify[y + 3] == "X" and identify[y + 6] == "X":
-            game.destroy()
+            declarationX()
             return
     
     #Below is to find the common X's diagonally
     if identify[0] == "X" and identify[4] == "X" and identify[8] == "X":
-        game.destroy()
+        declarationX()
         return
     elif identify[2] == "X" and identify[4] == "X" and identify[6] == "X":
-        game.destroy()
+        declarationX()
         return
+    
+    #Below is the removal of the first 3 moves when the game is tied
+    for z in range(len(order)):
+        if identify.count("X") == 4 and identify.count("O") == 5:
+            identify[order[0]] = "..."
+            identify[order[1]] = "..."
+            identify[order[2]] = "..."
+            order.pop(0)
+            order.pop(1)
+            order.pop(2)
+            updateButton()
+        elif identify.count("O") == 4 and identify.count("X") == 5:
+            identify[order[0]] = "..."
+            identify[order[1]] = "..."
+            identify[order[2]] = "..."
+            order.pop(0)
+            order.pop(1)
+            order.pop(2)
+            updateButton()
+        else:
+            print(z)
+            continue
         
 def winnerCheckO():
     row1 = [0, 1, 2]
@@ -61,21 +82,21 @@ def winnerCheckO():
     #Below is to find the common X's in a row
     for x in [identify[0:3], identify[3:6], identify[6:9]]:
         if x.count("O") == 3:
-            game.destroy()
+            declarationO()
             return
     
     #Below is to find the common X's in a column
     for y in range(len(identify[0:3])):
         if identify[y] == "O" and identify[y + 3] == "O" and identify[y + 6] == "O":
-            game.destroy()
+            declarationO()
             return
     
     #Below is to find the common X's diagonally
     if identify[0] == "O" and identify[4] == "O" and identify[8] == "O":
-        game.destroy()
+        declarationO()
         return
     elif identify[2] == "O" and identify[4] == "O" and identify[6] == "O":
-        game.destroy()
+        declarationO()
         return
     
     #Below is the removal of the first 3 moves when the game is tied
@@ -100,6 +121,23 @@ def winnerCheckO():
             print(z)
             continue
 
+def declarationO():
+    newWindow = tk.Toplevel(game)
+    newWindow.title("Player O wins")
+    newWindow.geometry("500x500")
+    declare = tk.Label(newWindow, text ="Player O wins!")
+    declare.config(font =("Courier", 40))
+    declare.pack()
+    
+def declarationX():
+    newWindow = tk.Toplevel(game)
+    newWindow.title("Player X wins")
+    newWindow.geometry("500x500")
+    declare = tk.Label(newWindow, text ="Player X wins!")
+    declare.config(font =("Courier", 40))
+    declare.pack()
+    
+game.geometry("400x400")
 btn1 = tk.Button(game, text=identify[0], command=lambda: move(0))
 btn2 = tk.Button(game, text=identify[1], command=lambda: move(1))
 btn3 = tk.Button(game, text=identify[2], command=lambda: move(2))
